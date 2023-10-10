@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Docs Editor",
+  "version": "1.0",
+  "description": "Edit GitHub files from Google Docs",
+  "permissions": ["activeTab", "storage", "identity",
+    "https://docs.google.com/"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "oauth2": {
+    "client_id": "60783705317-ve937gtci1otad94rb5red0b26jbk4dv.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/documents.readonly"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://docs.google.com/document/d/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
