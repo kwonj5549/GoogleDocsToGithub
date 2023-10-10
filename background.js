@@ -7,3 +7,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ docId: currentDocId });
     }
 });
+chrome.action.onClicked.addListener(function() {
+    chrome.tabs.create({url: 'index.html'});
+});

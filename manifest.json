@@ -12,11 +12,12 @@
     "service_worker": "background.js"
   },
   "oauth2": {
-    "client_id": "60783705317-ve937gtci1otad94rb5red0b26jbk4dv.apps.googleusercontent.com",
+    "client_id": "32767212467-022pqk6aa406d47frjm7b3b27rs4g2np.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/documents.readonly"
     ]
   },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkJ3qdKjf0bITAMjjw5KJ+w4S9EeOHfRaXgkOs0VIj2o2xR0SZIsA7t0Z33iZ+c5NL9Ye1wFWmCnNQjLBTxSntLhr7xM+4tH7svHLGPcvIGnahdSeQ5QsiVIrpit8i/tsJrw3Ja6Q14vWLcvNRbD4+caqk/FAJwkGWOOXHtd7UfnOZGlsH92v8uqo+nO6rF0kjuOs92EnkZpa3S4UvvqFxywFUZ8qTTwKAHSVkO2kqxmQIpVkDt96twdlopKF4jc6eKwPNL6UAOrmOzUmSFsq5nCu1+GxZbn7/vrTnyG5fBWhXaXXog0aYmG8v0THWPZ4OVDDcU0s90ZFHlf2tpCznwIDAQAB",
   "content_scripts": [
     {
       "matches": ["https://docs.google.com/document/d/*"],

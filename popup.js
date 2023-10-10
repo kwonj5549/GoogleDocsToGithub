@@ -24,7 +24,7 @@ document.getElementById('editButton').addEventListener('click', async () => {
 });
 
 async function getGitHubFiles(repo, path) {
-    const token = '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'; // Replace with your GitHub token
+    const token = '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'; // Replace with your GitHub token
     const url = `https://api.github.com/repos/kwonj5549/${repo}/contents/${path}`;
 
     const response = await fetch(url, {
@@ -132,23 +132,50 @@ function extractContentFromData(data) {
 }
 
 async function editGitHubFile(repo, filePath, content) {
-    const token = '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'; // Replace with your GitHub token
-    const url = `https://api.github.com/repos/kwonj5549/${repo}/contents/${filePath}`;
+    const token = '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'; // Replace with your GitHub token
+    const url = `https://api.github.com/repos/kwonj5549/${repo}/contents/src/store/${filePath}`;
 
-    // Construct request for GitHub API
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `token ${token}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            message: 'Commit message', // Replace with your commit message
-            content: btoa(content), // GitHub requires the content to be base64 encoded
-        }),
-    });
+    // First, retrieve the file to get its current sha
+    let fileData;
+    try {
+        const getFileResponse = await fetch(url, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        fileData = await getFileResponse.json();
+        if (!getFileResponse.ok) {
+            console.error('Error retrieving file data:', fileData);
+            throw new Error('Error retrieving file data');
+        }
+    } catch (err) {
+        console.error('Error retrieving file data:', err);
+        throw err;
+    }
 
-    const data = await response.json();
-    // Handle the response, check for errors, etc.
+    // Then, use the sha to update the file
+    try {
+        const updateFileResponse = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: 'Commit message', // Replace with your commit message
+                content: btoa(content), // GitHub requires the content to be base64 encoded
+                sha: fileData.sha, // Include the sha of the file retrieved earlier
+            }),
+        });
+        const updateData = await updateFileResponse.json();
+        if (!updateFileResponse.ok) {
+            console.error('Error updating file:', updateData);
+            throw new Error('Error updating file');
+        }
+    } catch (err) {
+        console.error('Error updating file:', err);
+        throw err;
+    }
 }
 
