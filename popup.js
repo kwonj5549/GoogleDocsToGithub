@@ -1,4 +1,8 @@
 // On popup load
+const GITHUB_TOKEN = 'YOURTOKEN'; // Replace with your GitHub token
+//das
+
+// On popup load
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const fileList = await getGitHubFiles('EnglProject2', 'src/store');
@@ -9,27 +13,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 document.getElementById('editButton').addEventListener('click', async () => {
-
     try {
+        // Get the current active tab in the focused window
+        chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+            if (!tabs[0]) {
+                console.error('No active tab found');
+                return;
+            }
 
-        const selectedFile = document.getElementById('fileDropdown').value;
+            const tab = tabs[0];
+            const docId = getGoogleDocIdFromUrl(tab.url); // Directly extract docId from URL
 
-        const docId = await getGoogleDocId();
+            if (!docId) {
+                console.error('Cannot extract Doc ID from the active tab URL');
+                return;
+            }
 
-        const docContent = await getGoogleDocContent(docId);
-        await editGitHubFile('EnglProject2', selectedFile, docContent);
+            // Proceed with the rest of your code
+            const selectedFile = document.getElementById('fileDropdown').value;
+            const docContent = await getGoogleDocContent(docId);
+            await editGitHubFile('EnglProject2', selectedFile, docContent);
+        });
     } catch (error) {
         console.error('Error editing GitHub file:', error);
     }
 });
 
+function getGoogleDocIdFromUrl(url) {
+    const match = url.match(/\/d\/(.*?)(?:[\/?]|$)/);
+    return match ? match[1] : null;
+}
+
 async function getGitHubFiles(repo, path) {
-    const token = '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'; // Replace with your GitHub token
     const url = `https://api.github.com/repos/kwonj5549/${repo}/contents/${path}`;
 
     const response = await fetch(url, {
         headers: {
-            'Authorization': `token ${token}`,
+            'Authorization': `token ${GITHUB_TOKEN}`,
             'Content-Type': 'application/json',
         },
     });
@@ -62,18 +82,7 @@ function populateFileDropdown(files) {
     });
 }
 
-async function getGoogleDocId() {
-    return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({type: 'getDocId'}, response => {
-            if(response.docId) {
-                console.log('Google Doc ID:', response.docId); // Logging Doc ID to console
-                resolve(response.docId);
-            } else {
-                reject('Doc ID not found');
-            }
-        });
-    });
-}
+
 function getAuthToken() {
     return new Promise((resolve, reject) => {
         chrome.identity.getAuthToken({ 'interactive': true }, function(token) {
@@ -132,7 +141,6 @@ function extractContentFromData(data) {
 }
 
 async function editGitHubFile(repo, filePath, content) {
-    const token = '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'; // Replace with your GitHub token
     const url = `https://api.github.com/repos/kwonj5549/${repo}/contents/src/store/${filePath}`;
 
     // First, retrieve the file to get its current sha
@@ -140,7 +148,7 @@ async function editGitHubFile(repo, filePath, content) {
     try {
         const getFileResponse = await fetch(url, {
             headers: {
-                'Authorization': `token ${token}`,
+                'Authorization': `token ${GITHUB_TOKEN}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -159,7 +167,7 @@ async function editGitHubFile(repo, filePath, content) {
         const updateFileResponse = await fetch(url, {
             method: 'PUT',
             headers: {
-                'Authorization': `token ${token}`,
+                'Authorization': `token ${GITHUB_TOKEN}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -178,4 +186,3 @@ async function editGitHubFile(repo, filePath, content) {
         throw err;
     }
 }
-
