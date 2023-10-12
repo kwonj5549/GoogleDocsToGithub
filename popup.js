@@ -1,5 +1,5 @@
 // On popup load
-const GITHUB_TOKEN = 'YOURTOKEN'; // Replace with your GitHub token
+const GITHUB_TOKEN = ''; // Replace with your GitHub token
 //das
 
 // On popup load
@@ -38,7 +38,11 @@ document.getElementById('editButton').addEventListener('click', async () => {
         console.error('Error editing GitHub file:', error);
     }
 });
-
+function unicodeToBase64(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
+        return String.fromCharCode('0x' + p1);
+    }));
+}
 function getGoogleDocIdFromUrl(url) {
     const match = url.match(/\/d\/(.*?)(?:[\/?]|$)/);
     return match ? match[1] : null;
@@ -172,7 +176,7 @@ async function editGitHubFile(repo, filePath, content) {
             },
             body: JSON.stringify({
                 message: 'Commit message', // Replace with your commit message
-                content: btoa(content), // GitHub requires the content to be base64 encoded
+                content: unicodeToBase64(content), // GitHub requires the content to be base64 encoded
                 sha: fileData.sha, // Include the sha of the file retrieved earlier
             }),
         });
